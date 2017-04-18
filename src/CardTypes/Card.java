@@ -1,5 +1,9 @@
 package CardTypes;
 
-public class Card {
+public abstract class Card {
+
+	public abstract String getColor();
+
+	public abstract int getNumber();
 
 }

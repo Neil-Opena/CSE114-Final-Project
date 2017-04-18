@@ -1,6 +1,6 @@
 package CardTypes;
 
-public class BabyBear extends Card implements Comparable{
+public class BabyBear extends Card{
 	private final String COLOR;
 	private final int NUMBER = 5;
 	
@@ -12,15 +12,11 @@ public class BabyBear extends Card implements Comparable{
 		return  NUMBER + " - " + COLOR;
 	}
 
-	@Override
-	public int compareTo(Object card) {
-		// FIXME
-		if(card instanceof Card){
-			
-			
-			return -1;
-		}else{
-			return -1;
-		}
+	public String getColor(){
+		return COLOR;
+	}
+	
+	public int getNumber(){
+		return NUMBER;
 	}
 }

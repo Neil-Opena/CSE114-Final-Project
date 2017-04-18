@@ -1,6 +1,6 @@
 import CardTypes.*;
 
-public class Player {
+public class Player{
 	private Card highCard;
 	private Card[] hand = new Card[1];
 	private boolean turn = false;
@@ -50,4 +50,5 @@ public class Player {
 	private void add(Card card){
 		hand[hand.length - 1] = card;
 	}
+
 }

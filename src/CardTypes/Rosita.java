@@ -11,4 +11,12 @@ public class Rosita extends Card{
 	public String toString(){
 		return  NUMBER + " - " + COLOR;
 	}
+	
+	public String getColor(){
+		return COLOR;
+	}
+	
+	public int getNumber(){
+		return NUMBER;
+	}
 }
