@@ -8,31 +8,13 @@ public class Test {
 		Player human = new Player();
 		Player computer = new Player();
 
-		// player draws card
-		first.shuffle();
-		System.out.print("Enter an integer (0 - 35):");
-		int index = stdin.nextInt();
-		stdin.nextLine();
-		Card userHigh = first.getDeck()[index];
-		human.setHighCard(userHigh);
-		first.discard(index);
-
-		// computer draws card
-		int compIndex = (int) (Math.random() * first.getDeck().length);
-		Card compHigh = first.getDeck()[compIndex];
-		computer.setHighCard(compHigh);
-		first.discard(compIndex);
-
-		System.out.println("You drew: " + userHigh);
-		System.out.println("Computer drew: " + compHigh);
-		
-		Player temp = calculateFirst(human,computer);	
-		if(temp == null){
-			System.out.println("=============================");
-			System.exit(0);
-		}
-		
-		
+		while(true){
+			Player temp = prep(first,human,computer);
+			if(temp != null){
+				temp.setTurn(true);
+				break;
+			}
+		} //each player draws a card to decide order
 		
 		CardDeck deck = new CardDeck();
 		deck.shuffle();
@@ -56,18 +38,81 @@ public class Test {
 		System.out.println("-----------------------------------");
 		printDeck(computer);
 		System.out.println("-----------------------------------");
+	
+		while(true){
+			Card temp = deck.drawTop();
+			deck.discard(0);
+			discard.addCard(temp);
+			if(discard.getDeck()[discard.getDeck().length - 1].getNumber() <= 7){
+				System.out.println("Need to match: [ " + temp + " ]");
+				break;
+			}System.out.println("NOT VALID: [ " + temp + " ]");
+		}
+		
+		System.out.println();
 		if(human.getTurn()){
 			System.out.println("You go first!");
 		}else{
 			System.out.println("Computer goes first!");
 		}
-		
-		boolean finished = false;
-		Card match = deck.drawTop(); //draw
-		deck.discard(0);//discard 
-		discard.addCard(match);
-		System.out.print("\nCard to match: " + match);
+		System.out.println();
 
+		boolean won = false;
+		while(!won){
+			printDeck(human);
+			System.out.println("Enter an integer (0 - " + (human.getHand().length - 1) + "):");
+			int choice = stdin.nextInt();
+			stdin.nextLine();
+			Card playerCard = human.getHand()[choice];
+			//TODO MAKE SPECIAL CARD IF STATEMENT FIRST
+			if(playerCard.equals(discard.getDeck()[discard.getDeck().length - 1])){
+				System.out.println("Need to match: [" + playerCard + " ]");
+				human.discard(choice);//discard from hand
+				discard.addCard(playerCard); //add to discard pile
+			}else{ //add an else if for when it is a special card
+				System.out.println("card did not match");
+				break;
+			}
+			//when its a wild card, let the setColor method be called
+			//when its a draw 1, change turn , force 1
+			//when its a draw 2, change turn , force 2
+		}
+		//TODO make sure that discard pile is flipped later, or access it from beginning
+		
+		/*
+		 * 
+		 * FIRST TRY TO DO IT SO THAT TWO PLAYERS ARE PLAYING
+		 * 
+		 */
+	}
+	
+	public static Player prep(CardDeck deck, Player one, Player two){
+		Scanner stdin = new Scanner(System.in);
+		deck.shuffle();
+		System.out.print("Enter an integer (0 - 35):");
+		int index = stdin.nextInt();
+		stdin.nextLine();
+		Card userHigh = deck.getDeck()[index];
+		one.setHighCard(userHigh);
+		deck.discard(index);
+
+		// computer draws card
+		int compIndex = (int) (Math.random() * deck.getDeck().length);
+		Card compHigh = deck.getDeck()[compIndex];
+		two.setHighCard(compHigh);
+		deck.discard(compIndex);
+
+		System.out.println("You drew: [ " + userHigh + " ]");
+		System.out.println("Computer drew: [ " + compHigh + " ]");
+		
+		if(userHigh.getNumber() == compHigh.getNumber()){
+			System.out.println("Players both drew same value card");
+			return null;
+		}else if(userHigh.getNumber() > compHigh.getNumber()){
+			return one;
+		}else{
+			return two;
+		}
 	}
 
 	public static void printDeck(Object deck) {
@@ -87,19 +132,6 @@ public class Test {
 
 	}
 
-	public static Player calculateFirst(Player one, Player two) {
-		Card cardOne = one.getHighCard();
-		Card cardTwo = two.getHighCard();
-		
-		if (cardOne.getNumber() == cardTwo.getNumber()) {
-			System.out.println("Players both drew same value card");
-			return null;
-		} else if (cardOne.getNumber() > cardTwo.getNumber()) {
-			return one;
-		} else {
-			return two;
-		}
-	}
 
 	public static void switchTurn(Player one, Player two) {
 		if(one.getTurn()){

@@ -2,7 +2,7 @@ package CardTypes;
 
 public class Wild extends Card {
 	private final int NUMBER = 400;
-	private final String COLOR = null;
+	private String color = null;
 
 	public Wild() {
 
@@ -17,7 +17,11 @@ public class Wild extends Card {
 	}
 	
 	public String getColor(){
-		return COLOR;
+		return color;
+	}
+	
+	public void setColor(String color){
+		this.color = color;
 	}
 	
 }

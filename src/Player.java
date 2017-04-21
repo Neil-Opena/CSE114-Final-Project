@@ -39,6 +39,23 @@ public class Player{
 		}
 	}
 	
+	public void discard(int index){
+		hand[index] = null;
+		resize();
+	}
+	
+	public void resize(){
+		Card[] temp = new Card[hand.length - 1];
+		for(int i = 0, j = 0; i < hand.length; i++){
+			if(hand[i] != null){
+				temp[j] = hand[i];
+				j++;
+			}
+		}
+		
+		hand = temp;
+	}
+	
 	private void extend(){
 		Card[] temp = new Card[hand.length + 1];
 		for(int i = 0; i < hand.length;i++){
