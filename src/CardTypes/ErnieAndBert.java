@@ -1,6 +1,6 @@
 package CardTypes;
 
-public class ErnieAndBert extends Card{
+public class ErnieAndBert extends Card implements Special{
 	private final String COLOR;
 	private final String SPECIAL = "Draw 1";
 	private final int NUMBER = 100;
@@ -19,5 +19,9 @@ public class ErnieAndBert extends Card{
 	
 	public int getNumber(){
 		return NUMBER;
+	}
+	
+	public int special(){
+		return 1;
 	}
 }

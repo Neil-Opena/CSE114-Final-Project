@@ -8,20 +8,19 @@ public class Test {
 		Player human = new Player();
 		Player computer = new Player();
 
-		while(true){
-			Player temp = prep(first,human,computer);
-			if(temp != null){
+		while (true) {
+			Player temp = prep(first, human, computer);
+			if (temp != null) {
 				temp.setTurn(true);
 				break;
 			}
-		} //each player draws a card to decide order
-		
+		} // each player draws a card to decide order
+
 		CardDeck deck = new CardDeck();
 		deck.shuffle();
 		deck.reverse();
 		DiscardPile discard = new DiscardPile();
 
-		System.out.println("==================================");
 		// five cards each
 		for (int i = 0; i < 5; i++) {
 			Card card = deck.drawTop(); // draw
@@ -33,60 +32,158 @@ public class Test {
 			computer.addCard(card);
 			deck.discard(0);
 		}
-
+		
+		System.out.println();
+		
+		System.out.println("Your cards");
 		printDeck(human);
-		System.out.println("-----------------------------------");
+		System.out.println("Computer cards");
 		printDeck(computer);
-		System.out.println("-----------------------------------");
-	
-		while(true){
+
+		while (true) {
 			Card temp = deck.drawTop();
 			deck.discard(0);
 			discard.addCard(temp);
-			if(discard.getDeck()[discard.getDeck().length - 1].getNumber() <= 7){
+			if (discard.getDeck()[discard.getDeck().length - 1].getNumber() <= 7) {
 				System.out.println("Need to match: [ " + temp + " ]");
 				break;
-			}System.out.println("NOT VALID: [ " + temp + " ]");
+			}
+			System.out.println("NOT VALID: [ " + temp + " ]");
 		}
-		
-		System.out.println();
-		if(human.getTurn()){
-			System.out.println("You go first!");
-		}else{
-			System.out.println("Computer goes first!");
-		}
+
 		System.out.println();
 
-		boolean won = false;
-		while(!won){
-			printDeck(human);
-			System.out.println("Enter an integer (0 - " + (human.getHand().length - 1) + "):");
-			int choice = stdin.nextInt();
-			stdin.nextLine();
-			Card playerCard = human.getHand()[choice];
-			//TODO MAKE SPECIAL CARD IF STATEMENT FIRST
-			if(playerCard.equals(discard.getDeck()[discard.getDeck().length - 1])){
-				System.out.println("Need to match: [" + playerCard + " ]");
-				human.discard(choice);//discard from hand
-				discard.addCard(playerCard); //add to discard pile
-			}else{ //add an else if for when it is a special card
-				System.out.println("card did not match");
-				break;
+		boolean gameOver = false;
+		while (!gameOver) {
+			//if num of deck....
+			
+			if (human.getTurn()) {
+				if(human.getDrawOne()){
+					Card card = deck.drawTop();
+					human.addCard(card);
+					deck.discard(0);
+					human.setDrawOne(false);
+					//forfeit turn
+					switchTurn(human,computer);
+					System.out.println("-----you draw one card and forfeit turn-----");
+					continue;
+				}else if(human.getDrawTwo()){
+					for(int i = 0; i < 2;i++){
+						Card card = deck.drawTop();
+						human.addCard(card);
+						deck.discard(0);
+					}
+					human.setDrawTwo(false);
+					//forfeit turn
+					switchTurn(human,computer);
+					System.out.println("-----you draw two cards and forfeit turn-----");
+					continue;
+				}
+				
+				System.out.println("\nYour turn\n");
+				printDeck(human);
+				System.out.println("Enter an integer (0 - " + (human.getHand().length - 1) + "):");
+				int choice = stdin.nextInt();
+				stdin.nextLine();
+				Card playerCard = human.getHand()[choice];
+				
+				if (playerCard instanceof Wild) {
+					System.out.println("Enter color to switch: ");
+					String color = stdin.nextLine();
+					((Wild) playerCard).setColor(color);
+					human.discard(choice);
+					discard.addCard(playerCard);
+					System.out.println("Need to match: [" + playerCard + " - " + playerCard.getColor() + " ]");
+				} else if (playerCard.equals(discard.getDeck()[discard.getDeck().length - 1])) {
+					System.out.println("Need to match: [" + playerCard + " ]");
+					human.discard(choice);// discard from hand
+					discard.addCard(playerCard); // add to discard pile
+					if (playerCard instanceof ErnieAndBert) {
+						System.out.println("Computer draws 1 card");
+						computer.setDrawOne(true);
+					}else if(playerCard instanceof Oscar){
+						System.out.println("Computer draws 2 cards");
+						computer.setDrawTwo(true);
+					}
+				} else { // add an else if for when it is a special card
+					System.out.println("card did not match");
+					Card card = deck.drawTop();
+					human.addCard(card);
+					deck.discard(0);
+					System.out.println("Drew: [ " + card + " ]");
+
+					//can still check if card can be placed
+				}
+				switchTurn(human, computer);
+			} else {
+				//computer turn:
+				//iterate through all of the cards to see if anything matches..first regular cards
+				//then special cards
+				//if none matches, DRAW ONE
+				//check if one matches, else switchTurn(human,computer)
+				if(computer.getDrawOne()){
+					Card card = deck.drawTop();
+					computer.addCard(card);
+					deck.discard(0);
+					computer.setDrawOne(false);
+					//forfeit turn
+					System.out.println("-----computer draws one card and forfeit turn-----");
+					switchTurn(human,computer);
+					continue;
+				}else if(computer.getDrawTwo()){
+					for(int i = 0; i < 2;i++){
+						Card card = deck.drawTop();
+						computer.addCard(card);
+						deck.discard(0);
+					}
+					computer.setDrawTwo(false);
+					//forfeit turn
+					System.out.println("-----computer draws two cards and forfeit turn-----");
+					switchTurn(human,computer);
+					continue;
+				}
+				System.out.println("\nComputer turn\n");
+				printDeck(computer);
+				System.out.println("Enter an integer (0 - " + (computer.getHand().length - 1) + "):");
+				int choice = stdin.nextInt();
+				stdin.nextLine();
+				Card playerCard = computer.getHand()[choice];
+			
+				if (playerCard instanceof Wild) {
+					System.out.println("Enter color to switch: ");
+					String color = stdin.nextLine();
+					((Wild) playerCard).setColor(color);
+					computer.discard(choice);
+					discard.addCard(playerCard);
+					System.out.println("Need to match: [" + playerCard + " - " + playerCard.getColor() + " ]");
+				} else if (playerCard.equals(discard.getDeck()[discard.getDeck().length - 1])) {
+					System.out.println("Need to match: [" + playerCard + " ]");
+					computer.discard(choice);// discard from hand
+					discard.addCard(playerCard); // add to discard pile
+					if (playerCard instanceof ErnieAndBert) {
+						System.out.println("You draw 1 card");
+						human.setDrawOne(true);
+					}else if(playerCard instanceof Oscar){
+						System.out.println("You draw 2 cards");
+						human.setDrawTwo(true);
+					}
+				} else { 
+					System.out.println("card did not match");
+					Card card = deck.drawTop();
+					computer.addCard(card);
+					deck.discard(0);
+					System.out.println("Drew: [ " + card + " ]");
+					//can still check if card can be placed
+				}
+				switchTurn(human, computer);
 			}
-			//when its a wild card, let the setColor method be called
-			//when its a draw 1, change turn , force 1
-			//when its a draw 2, change turn , force 2
 		}
-		//TODO make sure that discard pile is flipped later, or access it from beginning
-		
-		/*
-		 * 
-		 * FIRST TRY TO DO IT SO THAT TWO PLAYERS ARE PLAYING
-		 * 
-		 */
+		// TODO make sure that discard pile is flipped later, or access it from
+		// beginning
+
 	}
-	
-	public static Player prep(CardDeck deck, Player one, Player two){
+
+	public static Player prep(CardDeck deck, Player one, Player two) {
 		Scanner stdin = new Scanner(System.in);
 		deck.shuffle();
 		System.out.print("Enter an integer (0 - 35):");
@@ -104,18 +201,19 @@ public class Test {
 
 		System.out.println("You drew: [ " + userHigh + " ]");
 		System.out.println("Computer drew: [ " + compHigh + " ]");
-		
-		if(userHigh.getNumber() == compHigh.getNumber()){
+
+		if (userHigh.getNumber() == compHigh.getNumber()) {
 			System.out.println("Players both drew same value card");
 			return null;
-		}else if(userHigh.getNumber() > compHigh.getNumber()){
+		} else if (userHigh.getNumber() > compHigh.getNumber()) {
 			return one;
-		}else{
+		} else {
 			return two;
 		}
 	}
 
 	public static void printDeck(Object deck) {
+		System.out.println("----------------------------------------------");
 		if (deck instanceof CardDeck) {
 			for (int i = 0; i < ((CardDeck) deck).getDeck().length; i++) {
 				System.out.println(((CardDeck) deck).getDeck()[i]);
@@ -129,15 +227,16 @@ public class Test {
 				System.out.println(((DiscardPile) deck).getDeck()[i]);
 			}
 		}
+		System.out.println("----------------------------------------------");
+
 
 	}
 
-
 	public static void switchTurn(Player one, Player two) {
-		if(one.getTurn()){
+		if (one.getTurn()) {
 			one.setTurn(false);
 			two.setTurn(true);
-		}else{
+		} else {
 			one.setTurn(true);
 			two.setTurn(false);
 		}

@@ -4,6 +4,8 @@ public class Player{
 	private Card highCard;
 	private Card[] hand = new Card[1];
 	private boolean turn = false;
+	private boolean drawOne = false;
+	private boolean drawTwo = false;
 	
 	public Player(){
 		
@@ -37,6 +39,22 @@ public class Player{
 			extend();
 			add(card);
 		}
+	}
+	
+	public boolean getDrawOne(){
+		return drawOne;
+	}
+	
+	public void setDrawOne(boolean a){
+		drawOne = a;
+	}
+	
+	public boolean getDrawTwo(){
+		return drawTwo;
+	}
+	
+	public void setDrawTwo(boolean a){
+		drawTwo = a;
 	}
 	
 	public void discard(int index){

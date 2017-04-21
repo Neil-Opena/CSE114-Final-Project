@@ -1,6 +1,6 @@
 package CardTypes;
 
-public class Wild extends Card {
+public class Wild extends Card{
 	private final int NUMBER = 400;
 	private String color = null;
 
