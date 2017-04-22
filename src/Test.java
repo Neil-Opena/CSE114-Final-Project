@@ -5,6 +5,7 @@ public class Test {
 	public static void main(String[] args) {
 		Scanner stdin = new Scanner(System.in);
 		CardDeck first = new CardDeck();
+		first.reset();
 		Player human = new Player();
 		Player computer = new Player();
 
@@ -17,6 +18,7 @@ public class Test {
 		} // each player draws a card to decide order
 
 		CardDeck deck = new CardDeck();
+		deck.reset();
 		deck.shuffle();
 		deck.reverse();
 		DiscardPile discard = new DiscardPile();
@@ -32,9 +34,9 @@ public class Test {
 			computer.addCard(card);
 			deck.discard(0);
 		}
-		
+
 		System.out.println();
-		
+
 		System.out.println("Your cards");
 		printDeck(human);
 		System.out.println("Computer cards");
@@ -54,39 +56,41 @@ public class Test {
 		System.out.println();
 
 		boolean gameOver = false;
+		
 		while (!gameOver) {
-			//if num of deck....
-			
+			// if num of deck....
 			if (human.getTurn()) {
-				if(human.getDrawOne()){
+				if (human.getDrawOne()) {
+					checkDeck(deck, discard, 1);
 					Card card = deck.drawTop();
 					human.addCard(card);
 					deck.discard(0);
 					human.setDrawOne(false);
-					//forfeit turn
-					switchTurn(human,computer);
+					// forfeit turn
+					switchTurn(human, computer);
 					System.out.println("-----you draw one card and forfeit turn-----");
 					continue;
-				}else if(human.getDrawTwo()){
-					for(int i = 0; i < 2;i++){
+				} else if (human.getDrawTwo()) {
+					checkDeck(deck, discard, 2);
+					for (int i = 0; i < 2; i++) {
 						Card card = deck.drawTop();
 						human.addCard(card);
 						deck.discard(0);
 					}
 					human.setDrawTwo(false);
-					//forfeit turn
-					switchTurn(human,computer);
+					// forfeit turn
+					switchTurn(human, computer);
 					System.out.println("-----you draw two cards and forfeit turn-----");
 					continue;
 				}
-				
+
 				System.out.println("\nYour turn\n");
 				printDeck(human);
 				System.out.println("Enter an integer (0 - " + (human.getHand().length - 1) + "):");
 				int choice = stdin.nextInt();
 				stdin.nextLine();
 				Card playerCard = human.getHand()[choice];
-				
+
 				if (playerCard instanceof Wild) {
 					System.out.println("Enter color to switch: ");
 					String color = stdin.nextLine();
@@ -101,45 +105,71 @@ public class Test {
 					if (playerCard instanceof ErnieAndBert) {
 						System.out.println("Computer draws 1 card");
 						computer.setDrawOne(true);
-					}else if(playerCard instanceof Oscar){
+					} else if (playerCard instanceof Oscar) {
 						System.out.println("Computer draws 2 cards");
 						computer.setDrawTwo(true);
 					}
 				} else { // add an else if for when it is a special card
 					System.out.println("card did not match");
+					checkDeck(deck, discard, 1);
 					Card card = deck.drawTop();
 					human.addCard(card);
 					deck.discard(0);
 					System.out.println("Drew: [ " + card + " ]");
+					// check if card can be placed?
+					if (card instanceof Wild) {
+						System.out.println("Enter color to switch: ");
+						String color = stdin.nextLine();
+						((Wild) card).setColor(color);
+						human.discard(choice);
+						discard.addCard(card);
+						System.out.println("Need to match: [" + card + " - " + card.getColor() + " ]");
+					} else if (card.equals(discard.getDeck()[discard.getDeck().length - 1])) {
+						System.out.println("Need to match: [" + card + " ]");
+						human.discard(choice);// discard from hand
+						discard.addCard(card); // add to discard pile
+						if (card instanceof ErnieAndBert) {
+							System.out.println("Computer draws 1 card");
+							computer.setDrawOne(true);
+						} else if (card instanceof Oscar) {
+							System.out.println("Computer draws 2 cards");
+							computer.setDrawTwo(true);
+						}
+						// FIXME, check if card can be placed
+					}
 
-					//can still check if card can be placed
+				}
+				if(human.getHand().length == 0){
+					human.setWon(true);
+					gameOver = true;
 				}
 				switchTurn(human, computer);
 			} else {
-				//computer turn:
-				//iterate through all of the cards to see if anything matches..first regular cards
-				//then special cards
-				//if none matches, DRAW ONE
-				//check if one matches, else switchTurn(human,computer)
-				if(computer.getDrawOne()){
+				// computer turn:
+				// iterate through all of the cards to see if anything
+				// matches..first regular cards
+				// then special cards
+				if (computer.getDrawOne()) {
+					checkDeck(deck, discard, 1);
 					Card card = deck.drawTop();
 					computer.addCard(card);
 					deck.discard(0);
 					computer.setDrawOne(false);
-					//forfeit turn
+					// forfeit turn
 					System.out.println("-----computer draws one card and forfeit turn-----");
-					switchTurn(human,computer);
+					switchTurn(human, computer);
 					continue;
-				}else if(computer.getDrawTwo()){
-					for(int i = 0; i < 2;i++){
+				} else if (computer.getDrawTwo()) {
+					checkDeck(deck, discard, 2);
+					for (int i = 0; i < 2; i++) {
 						Card card = deck.drawTop();
 						computer.addCard(card);
 						deck.discard(0);
 					}
 					computer.setDrawTwo(false);
-					//forfeit turn
+					// forfeit turn
 					System.out.println("-----computer draws two cards and forfeit turn-----");
-					switchTurn(human,computer);
+					switchTurn(human, computer);
 					continue;
 				}
 				System.out.println("\nComputer turn\n");
@@ -148,7 +178,7 @@ public class Test {
 				int choice = stdin.nextInt();
 				stdin.nextLine();
 				Card playerCard = computer.getHand()[choice];
-			
+
 				if (playerCard instanceof Wild) {
 					System.out.println("Enter color to switch: ");
 					String color = stdin.nextLine();
@@ -163,24 +193,79 @@ public class Test {
 					if (playerCard instanceof ErnieAndBert) {
 						System.out.println("You draw 1 card");
 						human.setDrawOne(true);
-					}else if(playerCard instanceof Oscar){
+					} else if (playerCard instanceof Oscar) {
 						System.out.println("You draw 2 cards");
 						human.setDrawTwo(true);
 					}
-				} else { 
+				} else {
 					System.out.println("card did not match");
+					// check if there are cards in deck && deck.getDeck().length
+					// > 0
+					checkDeck(deck,discard,1);
 					Card card = deck.drawTop();
 					computer.addCard(card);
 					deck.discard(0);
 					System.out.println("Drew: [ " + card + " ]");
-					//can still check if card can be placed
+					// FIXME, check if card can be placed
+
+					if (card instanceof Wild) {
+						System.out.println("Enter color to switch: ");
+						String color = stdin.nextLine();
+						((Wild) card).setColor(color);
+						human.discard(choice);
+						discard.addCard(card);
+						System.out.println("Need to match: [" + card + " - " + card.getColor() + " ]");
+					} else if (card.equals(discard.getDeck()[discard.getDeck().length - 1])) {
+						System.out.println("Need to match: [" + card + " ]");
+						human.discard(choice);// discard from hand
+						discard.addCard(card); // add to discard pile
+						if (card instanceof ErnieAndBert) {
+							System.out.println("Computer draws 1 card");
+							computer.setDrawOne(true);
+						} else if (card instanceof Oscar) {
+							System.out.println("Computer draws 2 cards");
+							computer.setDrawTwo(true);
+						}
+					}
+
+				}
+				if(computer.getHand().length == 0){
+					computer.setWon(true);
+					gameOver = true;
 				}
 				switchTurn(human, computer);
 			}
 		}
-		// TODO make sure that discard pile is flipped later, or access it from
-		// beginning
+		
+		if(human.getWon()){
+			System.out.println("YOU WON!!!");
+		}else{
+			System.out.println("COMPUTER WON!!!");
+		}
 
+	}
+	//FIXME
+	public static void checkDeck(CardDeck deck, DiscardPile discard, int modifier) {
+		if (deck.getDeck().length - modifier < 0) {
+			System.out.println("ALERT " + deck.getDeck().length + " cards remaining");
+			DiscardPile temp0 = new DiscardPile();
+			temp0.addCard(discard.getDeck()[discard.getDeck().length - 1]); // need
+																			// to
+																			// match
+																			// the
+																			// last
+																			// card
+			System.out.println("MATCH: " + temp0.getDeck()[0]);
+			CardDeck temp1 = new CardDeck();
+			for (int i = 0; i < discard.getDeck().length; i++) {
+				temp1.getDeck()[i] = discard.getDeck()[i];
+			}
+			//temp1.resize(); // transfer all contents from discard to temp1 //FIXME
+			printDeck(temp1);
+			discard = temp0;
+			deck = temp1;
+			deck.shuffle();
+		}
 	}
 
 	public static Player prep(CardDeck deck, Player one, Player two) {
@@ -228,7 +313,6 @@ public class Test {
 			}
 		}
 		System.out.println("----------------------------------------------");
-
 
 	}
 

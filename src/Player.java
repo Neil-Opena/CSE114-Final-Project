@@ -6,6 +6,8 @@ public class Player{
 	private boolean turn = false;
 	private boolean drawOne = false;
 	private boolean drawTwo = false;
+	private boolean won = false;
+	private boolean uno = false;
 	
 	public Player(){
 		
@@ -26,6 +28,23 @@ public class Player{
 	public void setTurn(boolean turn){
 		this.turn = turn;
 	}
+	
+	public boolean getWon(){
+		return won;
+	}
+	
+	public void setWon(boolean a){
+		won = a;
+	}
+	
+	public boolean getUno(){
+		return uno;
+	}
+	
+	public void setUno(boolean a){
+		uno = a;
+	}
+	
 	
 	public Card[] getHand(){
 		return hand;

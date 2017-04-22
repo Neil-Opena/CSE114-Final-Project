@@ -4,7 +4,7 @@ public class CardDeck {
 	private Card[] deck = new Card[36];
 	
 	public CardDeck(){
-		reset();
+		
 	}
 	
 	public Card[] getDeck(){
@@ -69,6 +69,7 @@ public class CardDeck {
 		deck[35] = new Wild();
 	}
 	
+	
 	public void shuffle(){
 		//Shuffling two different ways
 		for(int i = 0; i < deck.length; i++){
@@ -104,7 +105,7 @@ public class CardDeck {
 		return deck[0];
 	}
 	
-	private void resize(){
+	public void resize(){
 		Card[] temp = new Card[deck.length - 1];
 		for(int i = 0, j = 0; i < deck.length; i++){
 			if(deck[i] != null){
