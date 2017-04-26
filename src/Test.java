@@ -47,7 +47,6 @@ public class Test {
 			deck.discard(0);
 			discard.addCard(temp);
 			if (discard.getDeck()[discard.getDeck().length - 1].getNumber() <= 7) {
-				System.out.println("Need to match: [ " + temp + " ]");
 				break;
 			}
 			System.out.println("NOT VALID: [ " + temp + " ]");
@@ -56,9 +55,15 @@ public class Test {
 		System.out.println();
 
 		boolean gameOver = false;
-		
+
 		while (!gameOver) {
-			// if num of deck....
+			Card matchCard = discard.getDeck()[discard.getDeck().length - 1];
+			if (matchCard instanceof Wild) {
+				System.out.println("NEED TO MATCH: [ " + matchCard + "- " + matchCard.getColor() + " ]");
+			} else {
+				System.out.println("NEED TO MATCH: [ " + matchCard + " ]");
+			}
+			// TODO implement "UNO" part
 			if (human.getTurn()) {
 				if (human.getDrawOne()) {
 					checkDeck(deck, discard, 1);
@@ -97,9 +102,7 @@ public class Test {
 					((Wild) playerCard).setColor(color);
 					human.discard(choice);
 					discard.addCard(playerCard);
-					System.out.println("Need to match: [" + playerCard + " - " + playerCard.getColor() + " ]");
 				} else if (playerCard.equals(discard.getDeck()[discard.getDeck().length - 1])) {
-					System.out.println("Need to match: [" + playerCard + " ]");
 					human.discard(choice);// discard from hand
 					discard.addCard(playerCard); // add to discard pile
 					if (playerCard instanceof ErnieAndBert) {
@@ -111,35 +114,38 @@ public class Test {
 					}
 				} else { // add an else if for when it is a special card
 					System.out.println("card did not match");
+					// TODO
 					checkDeck(deck, discard, 1);
 					Card card = deck.drawTop();
 					human.addCard(card);
 					deck.discard(0);
 					System.out.println("Drew: [ " + card + " ]");
 					// check if card can be placed?
-					if (card instanceof Wild) {
-						System.out.println("Enter color to switch: ");
-						String color = stdin.nextLine();
-						((Wild) card).setColor(color);
-						human.discard(choice);
-						discard.addCard(card);
-						System.out.println("Need to match: [" + card + " - " + card.getColor() + " ]");
-					} else if (card.equals(discard.getDeck()[discard.getDeck().length - 1])) {
-						System.out.println("Need to match: [" + card + " ]");
-						human.discard(choice);// discard from hand
-						discard.addCard(card); // add to discard pile
-						if (card instanceof ErnieAndBert) {
-							System.out.println("Computer draws 1 card");
-							computer.setDrawOne(true);
-						} else if (card instanceof Oscar) {
-							System.out.println("Computer draws 2 cards");
-							computer.setDrawTwo(true);
+					System.out.println("Play Card (YES/NO):");
+					String response = stdin.nextLine();
+					if (response.equals("YES")) {
+						if (card instanceof Wild) {
+							System.out.println("Enter color to switch: ");
+							String color = stdin.nextLine();
+							((Wild) card).setColor(color);
+							human.discard(choice);
+							discard.addCard(card);
+						} else if (card.equals(discard.getDeck()[discard.getDeck().length - 1])) {
+							human.discard(choice);// discard from hand
+							discard.addCard(card); // add to discard pile
+							if (card instanceof ErnieAndBert) {
+								System.out.println("Computer draws 1 card");
+								computer.setDrawOne(true);
+							} else if (card instanceof Oscar) {
+								System.out.println("Computer draws 2 cards");
+								computer.setDrawTwo(true);
+							}
 						}
-						// FIXME, check if card can be placed
+
 					}
 
 				}
-				if(human.getHand().length == 0){
+				if (human.getHand().length == 0) {
 					human.setWon(true);
 					gameOver = true;
 				}
@@ -185,9 +191,7 @@ public class Test {
 					((Wild) playerCard).setColor(color);
 					computer.discard(choice);
 					discard.addCard(playerCard);
-					System.out.println("Need to match: [" + playerCard + " - " + playerCard.getColor() + " ]");
 				} else if (playerCard.equals(discard.getDeck()[discard.getDeck().length - 1])) {
-					System.out.println("Need to match: [" + playerCard + " ]");
 					computer.discard(choice);// discard from hand
 					discard.addCard(playerCard); // add to discard pile
 					if (playerCard instanceof ErnieAndBert) {
@@ -199,72 +203,69 @@ public class Test {
 					}
 				} else {
 					System.out.println("card did not match");
-					// check if there are cards in deck && deck.getDeck().length
-					// > 0
-					checkDeck(deck,discard,1);
+					// TODO
+					checkDeck(deck, discard, 1);
 					Card card = deck.drawTop();
 					computer.addCard(card);
 					deck.discard(0);
 					System.out.println("Drew: [ " + card + " ]");
-					// FIXME, check if card can be placed
-
-					if (card instanceof Wild) {
-						System.out.println("Enter color to switch: ");
-						String color = stdin.nextLine();
-						((Wild) card).setColor(color);
-						human.discard(choice);
-						discard.addCard(card);
-						System.out.println("Need to match: [" + card + " - " + card.getColor() + " ]");
-					} else if (card.equals(discard.getDeck()[discard.getDeck().length - 1])) {
-						System.out.println("Need to match: [" + card + " ]");
-						human.discard(choice);// discard from hand
-						discard.addCard(card); // add to discard pile
-						if (card instanceof ErnieAndBert) {
-							System.out.println("Computer draws 1 card");
-							computer.setDrawOne(true);
-						} else if (card instanceof Oscar) {
-							System.out.println("Computer draws 2 cards");
-							computer.setDrawTwo(true);
+					System.out.println("Play Card (YES/NO):");
+					String response = stdin.nextLine();
+					if (response.equals("YES")) {
+						if (card instanceof Wild) {
+							System.out.println("Enter color to switch: ");
+							String color = stdin.nextLine();
+							((Wild) card).setColor(color);
+							human.discard(choice);
+							discard.addCard(card);
+						} else if (card.equals(discard.getDeck()[discard.getDeck().length - 1])) {
+							human.discard(choice);// discard from hand
+							discard.addCard(card); // add to discard pile
+							if (card instanceof ErnieAndBert) {
+								System.out.println("Computer draws 1 card");
+								computer.setDrawOne(true);
+							} else if (card instanceof Oscar) {
+								System.out.println("Computer draws 2 cards");
+								computer.setDrawTwo(true);
+							}
 						}
 					}
 
 				}
-				if(computer.getHand().length == 0){
+				if (computer.getHand().length == 0) {
 					computer.setWon(true);
 					gameOver = true;
 				}
 				switchTurn(human, computer);
+				System.out.println("(" + deck.getDeck().length + ") card remaining");
 			}
 		}
-		
-		if(human.getWon()){
+
+		if (human.getWon()) {
 			System.out.println("YOU WON!!!");
-		}else{
+		} else {
 			System.out.println("COMPUTER WON!!!");
 		}
 
 	}
-	//FIXME
+
 	public static void checkDeck(CardDeck deck, DiscardPile discard, int modifier) {
 		if (deck.getDeck().length - modifier < 0) {
-			System.out.println("ALERT " + deck.getDeck().length + " cards remaining");
-			DiscardPile temp0 = new DiscardPile();
-			temp0.addCard(discard.getDeck()[discard.getDeck().length - 1]); // need
-																			// to
-																			// match
-																			// the
-																			// last
-																			// card
-			System.out.println("MATCH: " + temp0.getDeck()[0]);
-			CardDeck temp1 = new CardDeck();
+			System.out.println("________________________________________________________________________________");
+
+			Card tempCard = discard.getDeck()[discard.getDeck().length - 1];
 			for (int i = 0; i < discard.getDeck().length; i++) {
-				temp1.getDeck()[i] = discard.getDeck()[i];
+				deck.addCard(discard.getDeck()[i]);
 			}
-			//temp1.resize(); // transfer all contents from discard to temp1 //FIXME
-			printDeck(temp1);
-			discard = temp0;
-			deck = temp1;
+
+			for (int i = 0; i < discard.getDeck().length; i++) {
+				discard.getDeck()[i] = null;
+			}
+			discard.resize();
+			discard.addCard(tempCard);
+
 			deck.shuffle();
+
 		}
 	}
 

@@ -31,4 +31,8 @@ public class DiscardPile {
 		}
 		deck = temp;
 	}
+	
+	public void resize(){
+		deck = new Card[1];
+	}
 }

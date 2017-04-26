@@ -105,7 +105,7 @@ public class CardDeck {
 		return deck[0];
 	}
 	
-	public void resize(){
+	private void resize(){
 		Card[] temp = new Card[deck.length - 1];
 		for(int i = 0, j = 0; i < deck.length; i++){
 			if(deck[i] != null){
@@ -113,6 +113,18 @@ public class CardDeck {
 				j++;
 			}
 		}
+		
+		deck = temp;
+	}
+	
+	
+	public void addCard(Card card){
+		Card[] temp = new Card[deck.length + 1];
+		for(int i = 0; i < deck.length; i++){
+			temp[i] = deck[i];
+		}
+		
+		temp[temp.length - 1] = card;
 		
 		deck = temp;
 	}
